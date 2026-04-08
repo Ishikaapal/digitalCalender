@@ -44,19 +44,7 @@ Component-based UI design
 Tailwind utility-first styling
 CSS clip-path for custom shapes
 Responsive design (mobile-first approach)
-📂 Project Structure
-digitalCalender/
-│── src/
-│   ├── components/
-│   │   ├── Calendar.jsx
-│   │   ├── Header.jsx
-│   │   └── DayCell.jsx
-│   ├── App.jsx
-│   ├── main.jsx
-│── public/
-│── index.html
-│── tailwind.config.js
-│── vite.config.js
+
 ⚙️ How to Run Locally
 Clone the repository:
 git clone https://github.com/ishikaapal/digitalCalender.git
@@ -66,21 +54,12 @@ Install dependencies:
 npm install
 Start development server:
 npm run dev
+
 🎨 Design Highlights
 Inspired by real-world wall calendars
 Focus on visual hierarchy and spacing
 Combination of image + functional UI
 Minimal yet elegant interface
-📌 Future Enhancements
-📅 Date range selection (start → end)
-📝 Notes integration
-🔄 Month navigation (prev/next)
-🌙 Dark/light theme toggle
-🎞 Animations using Framer Motion
-💾 Local storage for persistence
-📸 Preview
-
-(Add screenshots or GIF here for better impact)
 
 🙌 Author : Ishika Pal
 
