@@ -1,60 +1,85 @@
 import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// 1. Eagerly grab all jpgs in the directory
-// This creates an object where keys are paths and values are the resolved image URLs
 const images = import.meta.glob('../assets/weather/*.jpg', { eager: true, import: 'default' });
 
-export default function Header({ currentDate }) {
+// Animation Variants for the Book Flip
+const pageFlipVariants = {
+  initial: (direction) => ({
+    rotateX: direction > 0 ? 90 : -90,
+    opacity: 0,
+    transformOrigin: "top", 
+  }),
+  animate: {
+    rotateX: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.8,
+      ease: [0.645, 0.045, 0.355, 1], 
+    },
+  },
+  exit: (direction) => ({
+    rotateX: direction > 0 ? -90 : 90,
+    opacity: 0,
+    transition: {
+      duration: 0.6,
+    },
+  }),
+};
+
+export default function Header({ currentDate, direction }) {
   const monthName = format(currentDate, 'MMMM').toLowerCase();
-  
-  // 2. Match the month name to the file path in your assets folder
-  // We look for a key that ends with "/april.jpg", for example.
   const imagePath = Object.keys(images).find((key) => key.endsWith(`/${monthName}.jpg`));
   const activeImage = images[imagePath];
 
   return (
-    <div className="relative h-72 w-full overflow-hidden bg-stone-200">
-      <AnimatePresence mode="wait">
-        <motion.img
+    <div className="perspective-container relative h-72 w-full overflow-hidden bg-white">
+   
+      <svg width="0" height="0" className="absolute">
+        <defs>
+          <clipPath id="wavy-path" clipPathUnits="objectBoundingBox">
+             <path d="M0,0 H1 V0.63 C 0.82 0.51, 0.7 0.61, 0.52 0.63 C 0.35 0.65, 0.24 0.57, 0 0.63 Z" />
+          </clipPath>
+        </defs>
+      </svg>
+
+      <AnimatePresence mode="popLayout" custom={direction}>
+        <motion.div
           key={monthName}
-          initial={{ opacity: 0, scale: 1.1 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ duration: 0.6 }}
-          src={activeImage}
-          alt={`${monthName} background`}
-          className="w-full h-full object-cover"
-          // Fallback if an image is missing
-          onError={(e) => {
-            e.target.src = 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1000';
-          }}
-        />
+          custom={direction}
+          variants={pageFlipVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          className="absolute inset-0 w-full h-full"
+        >
+          <img
+            src={activeImage}
+            alt={`${monthName} background`}
+            className="w-full h-full object-cover customShape "
+            
+          />
+          
+          <div className="absolute bottom-0 right-10 text-right">
+            <motion.h2 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-5xl font-black uppercase tracking-tighter text-black" 
+            >
+              {format(currentDate, 'MMMM')}
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="text-xl tracking-[0.4em] text-black font-bold"
+            >
+              {format(currentDate, 'yyyy')}
+            </motion.p>
+          </div>
+        </motion.div>
       </AnimatePresence>
-
-      {/* Modern Gradient & Diagonal Overlay */}
-      <div 
-        className="absolute inset-0 bg-gradient-to-br from-blue-600/80 to-transparent"
-        style={{ clipPath: 'polygon(0 0, 100% 0, 100% 70%, 45% 100%, 0 75%)' }}
-      />
-
-      <div className="absolute bottom-8 right-10 text-right text-white drop-shadow-lg">
-        <motion.p 
-          initial={{ y: 10, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="text-xl font-light tracking-[0.4em] mb-1"
-        >
-          2026
-        </motion.p>
-        <motion.h2 
-          key={monthName}
-          initial={{ x: 20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          className="text-5xl font-black uppercase tracking-tighter"
-        >
-          {format(currentDate, 'MMMM')}
-        </motion.h2>
-      </div>
     </div>
   );
 }

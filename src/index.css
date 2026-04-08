@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+@layer components {
+  .customShape {
+    /* Use standard CSS spacing here */
+    clip-path:polygon(0 0,100% 0,100% 100%, 90% 80%,5% 80%, 0% 75% )
+  }
+
+  /* Adds depth to the 3D flip */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+ 
+}
